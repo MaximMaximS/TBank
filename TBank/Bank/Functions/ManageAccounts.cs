@@ -46,9 +46,8 @@ public class ManageAccounts
                         a.AccountNumber == accountNumber && a.Owner.UserId == manageAccounts._user.UserId);
                     if (account != null)
                     {
-                        // TODO open account
-                        Console.WriteLine("Account found.");
-                        break;
+                        AccountView.Open(db, account, true);
+                        continue;
                     }
                 }
 
@@ -69,7 +68,25 @@ public class ManageAccounts
                 switch (option.KeyChar)
                 {
                     case '1':
+                        Console.Clear();
+                        Console.WriteLine($"Home > Account management ({manageAccounts._user.Username}) > Account\n");
 
+                        manageAccounts.ListAccounts();
+
+                        Console.Write("Enter account number: ");
+                        var accountNumber = Console.ReadLine();
+                        if (accountNumber != null)
+                        {
+                            var account = manageAccounts._db.Accounts.FirstOrDefault(a =>
+                                a.AccountNumber == accountNumber && a.Owner.UserId == manageAccounts._user.UserId);
+                            if (account != null)
+                            {
+                                AccountView.Open(db, account, true);
+                                continue;
+                            }
+                        }
+
+                        Console.WriteLine("\nInvalid account number.");
                         break;
                     case '2':
                         manageAccounts.CreateAccount();
