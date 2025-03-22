@@ -62,6 +62,29 @@ public static class Initializer
         db.Transactions.Add(sampleMoney);
         db.SaveChanges();
 
+        var exampleSavings = new SavingsAccount
+        {
+            AccountNumber = "0000000002",
+            Owner = example,
+            InterestRate = 3.5m,
+            Created = new DateTime(2021, 1, 1),
+        };
+        db.SavingsAccounts.Add(exampleSavings);
+        db.SaveChanges();
+
+        var sampleSavings = new Transaction
+        {
+            Amount = 10000,
+            Sender = account,
+            SenderId = account.AccountId,
+            Receiver = exampleSavings,
+            ReceiverId = exampleSavings.AccountId,
+            Note = "Initial deposit",
+            Created = new DateTime(2021, 1, 1),
+        };
+        db.Transactions.Add(sampleSavings);
+        db.SaveChanges();
+
 
         Console.Write("Bank initialized successfully. Press any key to continue...");
         Console.ReadKey(true);
