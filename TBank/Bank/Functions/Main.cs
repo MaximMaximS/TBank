@@ -21,7 +21,7 @@ public class Main
         {
             Console.Clear();
 
-            Console.WriteLine("Main menu\n");
+            Console.WriteLine("Home\n");
 
             Console.WriteLine("1. View accounts");
             Console.WriteLine("2. Change password");
@@ -45,22 +45,53 @@ public class Main
             switch (option.KeyChar)
             {
                 case '1':
-                    main.ViewAccounts();
+                    ManageAccounts.Open(db, user, true);
                     continue;
                 case '2':
                     if (main.ChangePassword())
                     {
                         logout = true;
                     }
+
+                    break;
+                case '3':
+                    if (user.PermissionLevel < 4)
+                    {
+                        continue;
+                    }
+
+                    Console.Clear();
+                    Console.WriteLine("Home > Account management\n");
+
+                    Console.Write("Open user: ");
+                    var openUser = Console.ReadLine();
+                    if (openUser != null)
+                    {
+                        if (openUser == "root")
+                        {
+                            Console.WriteLine("\nCannot edit root accounts.");
+                            break;
+                        }
+
+                        var userAccount = db.Users.FirstOrDefault(u => u.Username == openUser);
+                        if (userAccount != null)
+                        {
+                            ManageAccounts.Open(db, userAccount, false);
+                            continue;
+                        }
+                    }
+
+                    Console.WriteLine("\nInvalid user.");
                     break;
                 case '4':
                     if (user.PermissionLevel < 8)
                     {
                         continue;
                     }
+
                     ManageUsers.Open(db);
                     continue;
-                
+
                 case '0':
                     return false;
 
@@ -77,14 +108,11 @@ public class Main
         }
     }
 
-    private void ViewAccounts()
-    {
-    }
-
     private bool ChangePassword()
     {
         Console.Clear();
-        Console.WriteLine("Changing password\n");
+        Console.WriteLine("Home > Change password\n");
+
         Console.Write("Enter current password: ");
         var currentPassword = Console.ReadLine();
 
@@ -99,7 +127,7 @@ public class Main
 
             if (newPassword != null && confirmNewPassword != null && newPassword.Length < 8)
             {
-                Console.WriteLine("Password must be at least 8 characters long.");
+                Console.WriteLine("\nPassword must be at least 8 characters long.");
                 return false;
             }
 
@@ -114,16 +142,16 @@ public class Main
                 dbUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
                 _db.SaveChanges();
 
-                Console.WriteLine("Password changed successfully.");
+                Console.WriteLine("\nPassword changed successfully.");
                 Console.WriteLine("You will be logged out.");
                 return true;
             }
 
-            Console.WriteLine("Passwords do not match.");
+            Console.WriteLine("\nPasswords do not match.");
             return false;
         }
 
-        Console.WriteLine("Incorrect password.");
+        Console.WriteLine("\nIncorrect password.");
         return false;
     }
 }

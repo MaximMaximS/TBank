@@ -27,6 +27,8 @@ public class Client
         while (true)
         {
             Console.Clear();
+            Console.WriteLine("Login\n");
+
             Console.Write("Enter username: ");
             var username = Console.ReadLine();
             Console.Write("Enter password: ");

@@ -4,7 +4,7 @@ namespace TBank.Models.Accounts;
 
 public class SavingsAccount : Account
 {
-    public decimal InterestRate { get; set; }
+    public required decimal InterestRate { get; set; }
 
     public new static void OnModelCreating(ModelBuilder modelBuilder)
     {

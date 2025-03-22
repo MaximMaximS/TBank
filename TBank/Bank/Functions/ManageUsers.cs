@@ -19,7 +19,7 @@ public class ManageUsers
         {
             Console.Clear();
 
-            Console.WriteLine("User management\n");
+            Console.WriteLine("Home > User management\n");
 
             Console.WriteLine("1. List users");
             Console.WriteLine("2. Create user");
@@ -40,7 +40,7 @@ public class ManageUsers
                     break;
                 case '0':
                     return;
-                
+
                 default:
                     continue;
             }
@@ -48,7 +48,7 @@ public class ManageUsers
             Utils.Footer();
         }
     }
-    
+
     private void ListUsers()
     {
         Console.Clear();
@@ -68,23 +68,24 @@ public class ManageUsers
             Console.WriteLine(user.Username);
         }
     }
-    
+
     private void CreateUser()
     {
         Console.Clear();
+        Console.WriteLine("Home > User management > Create user\n");
 
         Console.Write("Enter username: ");
         var username = Console.ReadLine();
 
         Console.Write("Enter password: ");
         var password = Console.ReadLine();
-        
+
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
             Console.WriteLine("\nInvalid input.");
             return;
         }
-        
+
         if (password.Length < 8)
         {
             Console.WriteLine("\nPassword must be at least 8 characters long.");
@@ -104,8 +105,7 @@ public class ManageUsers
                 level = 4;
             }
         }
-        
-        
+
 
         var user = new User
         {

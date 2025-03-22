@@ -7,6 +7,7 @@ public static class Utils
         Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey(true);
     }
+
     public static bool ReadBool(string prompt)
     {
         bool q;
@@ -19,18 +20,19 @@ public static class Utils
                 q = true;
                 break;
             }
+
             if (input.KeyChar is 'n' or 'N')
             {
                 q = false;
                 break;
             }
-            
-            // erase last line
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
+
+            // erase the line
+            Console.SetCursorPosition(0, Console.CursorTop);
         }
-        
+
         Console.WriteLine();
-        
+
         return q;
     }
 }
