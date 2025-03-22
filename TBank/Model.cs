@@ -5,13 +5,13 @@ namespace TBank;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-public class BloggingContext : DbContext
+public class BankingContext : DbContext
 {
     public DbSet<User> Users { get; set; }
 
-    public string DbPath { get; }
+    private string DbPath { get; }
 
-    public BloggingContext()
+    public BankingContext()
     {
         const Environment.SpecialFolder folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
