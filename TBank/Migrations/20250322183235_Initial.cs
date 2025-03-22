@@ -19,8 +19,7 @@ namespace TBank.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Username = table.Column<string>(type: "TEXT", maxLength: 24, nullable: false),
                     PasswordHash = table.Column<string>(type: "TEXT", maxLength: 60, nullable: false),
-                    ManageUsers = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ManageAccounts = table.Column<bool>(type: "INTEGER", nullable: false)
+                    PermissionLevel = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

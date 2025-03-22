@@ -23,8 +23,7 @@ public static class Initializer
             {
                 Username = "root",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("root"),
-                ManageAccounts = true,
-                ManageUsers = true
+                PermissionLevel = 9,
             };
             db.Users.Add(root);
             db.SaveChanges();

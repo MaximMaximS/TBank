@@ -8,9 +8,7 @@ public class User
     public int UserId { get; set; }
     public required string Username { get; set; }
     public required string PasswordHash { get; set; }
-    public required bool ManageUsers { get; set; }
-    public required bool ManageAccounts { get; set; }
-
+    public required int PermissionLevel { get; set; }
     public List<Account> Accounts { get; set; } = [];
 
     public static void OnModelCreating(ModelBuilder modelBuilder)

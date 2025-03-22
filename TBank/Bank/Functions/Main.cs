@@ -26,12 +26,12 @@ public class Main
             Console.WriteLine("1. View accounts");
             Console.WriteLine("2. Change password");
 
-            if (user.ManageAccounts)
+            if (user.PermissionLevel >= 4)
             {
                 Console.WriteLine("3. Account management");
             }
 
-            if (user.ManageUsers)
+            if (user.PermissionLevel >= 8)
             {
                 Console.WriteLine("4. User management");
             }
@@ -54,6 +54,10 @@ public class Main
                     }
                     break;
                 case '4':
+                    if (user.PermissionLevel < 8)
+                    {
+                        continue;
+                    }
                     ManageUsers.Open(db);
                     continue;
                 

@@ -40,6 +40,9 @@ public class ManageUsers
                     break;
                 case '0':
                     return;
+                
+                default:
+                    continue;
             }
 
             Utils.Footer();
@@ -88,8 +91,19 @@ public class ManageUsers
             return;
         }
 
-        var manageAccounts = Utils.ReadBool("Can manage accounts");
-        var manageUsers = Utils.ReadBool("Can manage users");
+        var level = 0;
+        var admin = Utils.ReadBool("Is user admin");
+        if (admin)
+        {
+            level = 8;
+        }
+        else
+        {
+            if (Utils.ReadBool("Is user banker"))
+            {
+                level = 4;
+            }
+        }
         
         
 
@@ -97,8 +111,7 @@ public class ManageUsers
         {
             Username = username,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-            ManageAccounts = manageAccounts,
-            ManageUsers = manageUsers
+            PermissionLevel = level
         };
 
         _db.Users.Add(user);
