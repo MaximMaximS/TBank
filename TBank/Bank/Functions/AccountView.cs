@@ -1,4 +1,5 @@
-﻿using TBank.Models.Accounts;
+﻿using TBank.Models;
+using TBank.Models.Accounts;
 
 namespace TBank.Bank.Functions;
 
@@ -61,14 +62,18 @@ public class AccountView
 
         Console.WriteLine("0. Back");
 
+        Console.Write("\nSelect an option: ");
+
+
         var option = Console.ReadKey(true);
+        Console.WriteLine();
         switch (option.KeyChar)
         {
             case '1':
                 accountView.ViewTransactions();
                 break;
             case '2':
-                //accountView.SendMoney();
+                accountView.SendMoney();
                 break;
             case '0':
                 return false;
@@ -103,5 +108,60 @@ public class AccountView
             Console.WriteLine(
                 $"{transaction.Created} - {transaction.Sender.AccountNumber} -> {transaction.Receiver.AccountNumber}: {amount:C}");
         }
+    }
+
+    private void SendMoney()
+    {
+        Console.Clear();
+
+        Console.WriteLine($"{_header} > Send money\n");
+
+        Console.Write("Enter account number: ");
+        var accountNumber = Console.ReadLine();
+        if (accountNumber == null)
+        {
+            return;
+        }
+
+        var receiver = _db.Accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
+        if (receiver == null)
+        {
+            Console.WriteLine("\nInvalid account number.");
+            return;
+        }
+
+        Console.Write("Enter amount: ");
+        var amount = Console.ReadLine();
+        if (amount == null || !decimal.TryParse(amount, out var parsedAmount))
+        {
+            Console.WriteLine("\nInvalid amount.");
+            return;
+        }
+
+        if (parsedAmount <= 0)
+        {
+            Console.WriteLine("\nAmount must be greater than 0.");
+            return;
+        }
+
+        if (_enumerator.GetBalance() < parsedAmount)
+        {
+            Console.WriteLine("\nInsufficient funds.");
+            return;
+        }
+
+        var transaction = new Transaction
+        {
+            Amount = parsedAmount,
+            Sender = _account,
+            SenderId = _account.AccountId,
+            Receiver = receiver,
+            ReceiverId = receiver.AccountId,
+            Note = "Money transfer",
+        };
+        _db.Transactions.Add(transaction);
+        _db.SaveChanges();
+
+        Console.WriteLine($"\n{parsedAmount:C} sent to {receiver.AccountNumber}.");
     }
 }
