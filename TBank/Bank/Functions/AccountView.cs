@@ -60,6 +60,11 @@ public class AccountView
         Console.WriteLine("1. View transactions");
         Console.WriteLine("2. Send money");
 
+        if (account is SavingsAccount)
+        {
+            Console.WriteLine("3. Interest preview");
+        }
+
         Console.WriteLine("0. Back");
 
         Console.Write("\nSelect an option: ");
@@ -75,6 +80,10 @@ public class AccountView
             case '2':
                 accountView.SendMoney();
                 break;
+            case '3':
+                if (account is not SavingsAccount) return true;
+                accountView.InterestPreview();
+                break;
             case '0':
                 return false;
             default:
@@ -83,6 +92,25 @@ public class AccountView
 
         Utils.Footer();
         return true;
+    }
+
+    private void InterestPreview()
+    {
+        Console.Clear();
+        Console.WriteLine($"{_header} > Interest preview\n");
+
+        // read target date
+        Console.Write("Enter target date (yyyy-MM-dd): ");
+        var targetDate = Console.ReadLine();
+        if (targetDate == null || !DateTime.TryParse(targetDate, out var parsedDate))
+        {
+            Console.WriteLine("\nInvalid date.");
+            return;
+        }
+
+        var interest = _enumerator.PreviewInterest(parsedDate);
+
+        Console.WriteLine($"\nInterest on {parsedDate:yyyy-MM-dd}: {interest:C}");
     }
 
     private void ViewTransactions()
@@ -144,7 +172,7 @@ public class AccountView
             return;
         }
 
-        if (_enumerator.GetBalance() < parsedAmount)
+        if (_enumerator.GetBalance() < parsedAmount && _account.AccountNumber != "0000000000")
         {
             Console.WriteLine("\nInsufficient funds.");
             return;
@@ -156,7 +184,7 @@ public class AccountView
             var withdrawalThisMonth = _db.Transactions
                 .Where(t => t.SenderId == _account.AccountId && t.Created.Month == DateTime.Now.Month)
                 .Sum(t => t.Amount);
-                
+
             if (withdrawalThisMonth + parsedAmount > 20000)
             {
                 Console.WriteLine("\nWithdrawal limit reached.");

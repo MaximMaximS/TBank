@@ -11,7 +11,7 @@ using TBank;
 namespace TBank.Migrations
 {
     [DbContext(typeof(BankingContext))]
-    [Migration("20250322195207_Initial")]
+    [Migration("20250322230731_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -132,6 +132,9 @@ namespace TBank.Migrations
                     b.Property<decimal>("InterestRate")
                         .HasPrecision(5, 2)
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Student")
+                        .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("Savings");
                 });

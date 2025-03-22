@@ -130,6 +130,9 @@ namespace TBank.Migrations
                         .HasPrecision(5, 2)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("Student")
+                        .HasColumnType("INTEGER");
+
                     b.HasDiscriminator().HasValue("Savings");
                 });
 

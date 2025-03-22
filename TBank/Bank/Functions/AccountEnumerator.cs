@@ -71,6 +71,29 @@ public class AccountEnumerator(BankingContext db, Account account)
         }
     }
 
+    public decimal PreviewInterest(DateTime when)
+    {
+        if (account is not SavingsAccount savingsAccount) return 0;
+        ApplyInterest();
+
+        var bal = GetBalance();
+
+        // how many times will interest be paid between now and when
+        var interestTimes = (when.Year - DateTime.Now.Year) * 12 + when.Month - DateTime.Now.Month;
+
+        var interest = bal;
+
+        for (var i = 0; i < interestTimes; i++)
+        {
+            interest *= 1 + savingsAccount.InterestRate / 100 / 12;
+            interest = Math.Floor(interest * 100) / 100;
+        }
+
+        interest -= bal;
+
+        return interest;
+    }
+
     private decimal GetBalanceAt(DateTime date)
     {
         var incoming = db.Transactions

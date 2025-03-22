@@ -110,7 +110,7 @@ public class ManageAccounts
 
         if (accounts.Count == 0)
         {
-            Console.WriteLine("No accounts found.");
+            Console.WriteLine("No accounts found.\n");
             return;
         }
 
@@ -159,6 +159,7 @@ public class ManageAccounts
 
         Console.Write("Account type (1. Basic, 2. Savings): ");
         var type = Console.ReadKey(true);
+        Console.WriteLine();
 
         switch (type.KeyChar)
         {
@@ -177,7 +178,7 @@ public class ManageAccounts
             case '2':
             {
                 const decimal interest = 3.5m;
-                
+
                 var student = Utils.ReadBool("Student");
 
                 var account = new SavingsAccount
