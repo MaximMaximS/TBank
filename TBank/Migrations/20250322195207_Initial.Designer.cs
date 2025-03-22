@@ -11,7 +11,7 @@ using TBank;
 namespace TBank.Migrations
 {
     [DbContext(typeof(BankingContext))]
-    [Migration("20250322183235_Initial")]
+    [Migration("20250322195207_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -56,11 +56,46 @@ namespace TBank.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("TBank.Models.Transaction", b =>
+                {
+                    b.Property<int>("TransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReceiverId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("TransactionId");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Transactions");
+                });
+
             modelBuilder.Entity("TBank.Models.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -110,6 +145,32 @@ namespace TBank.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("TBank.Models.Transaction", b =>
+                {
+                    b.HasOne("TBank.Models.Accounts.Account", "Receiver")
+                        .WithMany("IncomingTransactions")
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TBank.Models.Accounts.Account", "Sender")
+                        .WithMany("OutgoingTransactions")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("TBank.Models.Accounts.Account", b =>
+                {
+                    b.Navigation("IncomingTransactions");
+
+                    b.Navigation("OutgoingTransactions");
                 });
 
             modelBuilder.Entity("TBank.Models.User", b =>

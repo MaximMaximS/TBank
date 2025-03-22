@@ -12,26 +12,20 @@ public static class Initializer
 
         db.Database.Migrate();
 
-        var account = db.Accounts.FirstOrDefault(a => a.AccountNumber == "0000000000");
-        if (account != null) return db;
+        var cAccount = db.Accounts.FirstOrDefault(a => a.AccountNumber == "0000000000");
+        if (cAccount != null) return db;
         Console.WriteLine("Initializing bank...\n");
 
-        var root = db.Users.FirstOrDefault(u => u.Username == "root");
-        if (root == null)
+        var root = new User
         {
-            root = new User
-            {
-                Username = "root",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("root"),
-                PermissionLevel = 9,
-            };
-            db.Users.Add(root);
-            db.SaveChanges();
+            Username = "root",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("root"),
+            PermissionLevel = 9,
+        };
+        db.Users.Add(root);
+        db.SaveChanges();
 
-            Console.WriteLine("Root user created.");
-        }
-
-        account = new Account
+        var account = new Account
         {
             AccountNumber = "0000000000",
             Owner = root,
@@ -39,9 +33,37 @@ public static class Initializer
         db.Accounts.Add(account);
         db.SaveChanges();
 
-        Console.WriteLine("Root account created.");
+        var example = new User
+        {
+            Username = "example",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("example"),
+            PermissionLevel = 0,
+        };
+        db.Users.Add(example);
+        db.SaveChanges();
 
-        Console.Write("\nBank initialized successfully. Press any key to continue...");
+        var exampleAccount = new BasicAccount
+        {
+            AccountNumber = "0000000001",
+            Owner = example,
+        };
+        db.BasicAccounts.Add(exampleAccount);
+        db.SaveChanges();
+
+        var sampleMoney = new Transaction
+        {
+            Amount = 1000,
+            Sender = account,
+            SenderId = account.AccountId,
+            Receiver = exampleAccount,
+            ReceiverId = exampleAccount.AccountId,
+            Note = "Initial deposit",
+        };
+        db.Transactions.Add(sampleMoney);
+        db.SaveChanges();
+
+
+        Console.Write("Bank initialized successfully. Press any key to continue...");
         Console.ReadKey(true);
 
         return db;

@@ -10,6 +10,8 @@ public class User
     public required string PasswordHash { get; set; }
     public required int PermissionLevel { get; set; }
     public List<Account> Accounts { get; set; } = [];
+    public DateTime Created { get; set; } = DateTime.Now;
+
 
     public static void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -9,6 +9,8 @@ public class Account
     public required User Owner { get; set; }
     public DateTime Created { get; set; } = DateTime.Now;
 
+    public List<Transaction> OutgoingTransactions { get; set; } = [];
+    public List<Transaction> IncomingTransactions { get; set; } = [];
 
     public static void OnModelCreating(ModelBuilder modelBuilder)
     {

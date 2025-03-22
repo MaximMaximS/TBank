@@ -14,6 +14,8 @@ public class BankingContext : DbContext
     public DbSet<BasicAccount> BasicAccounts { get; set; }
     public DbSet<SavingsAccount> SavingsAccounts { get; set; }
 
+    public DbSet<Transaction> Transactions { get; set; }
+
     private string DbPath { get; }
 
     public BankingContext()
@@ -33,6 +35,7 @@ public class BankingContext : DbContext
     {
         User.OnModelCreating(modelBuilder);
         Account.OnModelCreating(modelBuilder);
+        Transaction.OnModelCreating(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }

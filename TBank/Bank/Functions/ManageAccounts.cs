@@ -47,6 +47,8 @@ public class ManageAccounts
                     if (account != null)
                     {
                         // TODO open account
+                        Console.WriteLine("Account found.");
+                        break;
                     }
                 }
 
@@ -104,7 +106,9 @@ public class ManageAccounts
                 _ => "Unknown"
             };
 
-            Console.WriteLine($"{account.AccountNumber}: {type}");
+            var balance = new AccountEnumerator(_db, account).GetBalance();
+
+            Console.WriteLine($"{account.AccountNumber}: {type} - {balance:C}");
         }
 
         Console.WriteLine();
