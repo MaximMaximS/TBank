@@ -3,12 +3,12 @@ using TBank.Models.Accounts;
 
 namespace TBank.Models;
 
-public class User(string username, string passwordHash)
+public class User
 {
     public int UserId { get; set; }
-    public string Username { get; set; } = username;
-    public string PasswordHash { get; set; } = passwordHash;
-    
+    public required string Username { get; set; }
+    public required string PasswordHash { get; set; }
+
     public List<Account> Accounts { get; set; } = [];
     
     public static void OnModelCreating(ModelBuilder modelBuilder)

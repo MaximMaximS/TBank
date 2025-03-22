@@ -2,15 +2,20 @@
 
 namespace TBank.Models.Accounts;
 
-public abstract class Account
+public class Account
 {
     public int AccountId { get; set; }
     public required string AccountNumber { get; set; }
     public required User Owner { get; set; }
- 
+    public DateTime Created { get; set; } = DateTime.Now;
+
+
     public static void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Account>().ToTable("Accounts");
+        modelBuilder.Entity<Account>().ToTable("Accounts").HasDiscriminator<string>("AccountType")
+            .HasValue<Account>("Base")
+            .HasValue<BasicAccount>("Basic")
+            .HasValue<SavingsAccount>("Savings");
         
         modelBuilder.Entity<Account>().HasIndex(a => a.AccountNumber).IsUnique();
 
