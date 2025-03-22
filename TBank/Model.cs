@@ -1,4 +1,5 @@
 ﻿using TBank.Models;
+using TBank.Models.Accounts;
 
 namespace TBank;
 
@@ -8,6 +9,9 @@ using System;
 public class BankingContext : DbContext
 {
     public DbSet<User> Users { get; set; }
+    
+    public DbSet<BasicAccount> BasicAccounts { get; set; }
+    public DbSet<SavingsAccount> SavingsAccounts { get; set; }
 
     private string DbPath { get; }
 
@@ -27,5 +31,8 @@ public class BankingContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         User.OnModelCreating(modelBuilder);
+        Account.OnModelCreating(modelBuilder);
+        
+        base.OnModelCreating(modelBuilder);
     }
 }
