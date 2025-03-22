@@ -177,12 +177,15 @@ public class ManageAccounts
             case '2':
             {
                 const decimal interest = 3.5m;
+                
+                var student = Utils.ReadBool("Student");
 
                 var account = new SavingsAccount
                 {
                     AccountNumber = GenerateAccountNumber(),
                     Owner = _user,
                     InterestRate = interest,
+                    Student = student,
                 };
 
                 _db.SavingsAccounts.Add(account);

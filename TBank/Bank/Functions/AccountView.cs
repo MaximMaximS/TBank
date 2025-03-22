@@ -150,6 +150,20 @@ public class AccountView
             return;
         }
 
+        if (_account is SavingsAccount { Student: true })
+        {
+            // 20k / month withdrawal limit
+            var withdrawalThisMonth = _db.Transactions
+                .Where(t => t.SenderId == _account.AccountId && t.Created.Month == DateTime.Now.Month)
+                .Sum(t => t.Amount);
+                
+            if (withdrawalThisMonth + parsedAmount > 20000)
+            {
+                Console.WriteLine("\nWithdrawal limit reached.");
+                return;
+            }
+        }
+
         var transaction = new Transaction
         {
             Amount = parsedAmount,

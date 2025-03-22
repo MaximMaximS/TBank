@@ -67,6 +67,7 @@ public static class Initializer
             AccountNumber = "0000000002",
             Owner = example,
             InterestRate = 3.5m,
+            Student = false,
             Created = new DateTime(2021, 1, 1),
         };
         db.SavingsAccounts.Add(exampleSavings);
