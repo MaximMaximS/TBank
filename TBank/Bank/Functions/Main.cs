@@ -41,20 +41,22 @@ public class Main
             Console.Write("\nSelect an option: ");
             var option = Console.ReadKey(true);
 
-            var relog = false;
+            var logout = false;
             switch (option.KeyChar)
             {
                 case '1':
                     main.ViewAccounts();
-                    break;
+                    continue;
                 case '2':
                     if (main.ChangePassword())
                     {
-                        relog = true;
+                        logout = true;
                     }
-
                     break;
-
+                case '4':
+                    ManageUsers.Open(db);
+                    continue;
+                
                 case '0':
                     return false;
 
@@ -62,10 +64,9 @@ public class Main
                     continue;
             }
 
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey(true);
+            Utils.Footer();
 
-            if (relog)
+            if (logout)
             {
                 return true;
             }
