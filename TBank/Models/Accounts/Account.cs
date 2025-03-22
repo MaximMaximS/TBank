@@ -16,13 +16,13 @@ public class Account
             .HasValue<Account>("Base")
             .HasValue<BasicAccount>("Basic")
             .HasValue<SavingsAccount>("Savings");
-        
+
         modelBuilder.Entity<Account>().HasIndex(a => a.AccountNumber).IsUnique();
 
         modelBuilder.Entity<Account>()
             .Property(a => a.AccountNumber)
             .HasMaxLength(10);
-        
+
         SavingsAccount.OnModelCreating(modelBuilder);
     }
 }

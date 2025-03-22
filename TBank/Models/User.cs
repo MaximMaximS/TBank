@@ -8,16 +8,18 @@ public class User
     public int UserId { get; set; }
     public required string Username { get; set; }
     public required string PasswordHash { get; set; }
+    public required bool ManageUsers { get; set; }
+    public required bool ManageAccounts { get; set; }
 
     public List<Account> Accounts { get; set; } = [];
-    
+
     public static void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
         modelBuilder.Entity<User>()
             .Property(u => u.Username)
             .HasMaxLength(24);
-        
+
         modelBuilder.Entity<User>()
             .Property(u => u.PasswordHash)
             .HasMaxLength(60);

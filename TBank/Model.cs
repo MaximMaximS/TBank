@@ -9,7 +9,7 @@ using System;
 public class BankingContext : DbContext
 {
     public DbSet<User> Users { get; set; }
-    
+
     public DbSet<Account> Accounts { get; set; }
     public DbSet<BasicAccount> BasicAccounts { get; set; }
     public DbSet<SavingsAccount> SavingsAccounts { get; set; }
@@ -28,12 +28,12 @@ public class BankingContext : DbContext
     // special "local" folder for your platform.
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite($"Data Source={DbPath}");
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         User.OnModelCreating(modelBuilder);
         Account.OnModelCreating(modelBuilder);
-        
+
         base.OnModelCreating(modelBuilder);
     }
 }

@@ -59,6 +59,12 @@ namespace TBank.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("ManageAccounts")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("ManageUsers")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(60)

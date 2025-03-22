@@ -11,7 +11,7 @@ using TBank;
 namespace TBank.Migrations
 {
     [DbContext(typeof(BankingContext))]
-    [Migration("20250322165909_Initial")]
+    [Migration("20250322174130_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -60,6 +60,12 @@ namespace TBank.Migrations
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("ManageAccounts")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("ManageUsers")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("PasswordHash")
