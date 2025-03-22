@@ -10,7 +10,7 @@ using TBank;
 namespace TBank.Migrations
 {
     [DbContext(typeof(BankingContext))]
-    [Migration("20250322140716_Initial")]
+    [Migration("20250322142359_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -34,6 +34,9 @@ namespace TBank.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
