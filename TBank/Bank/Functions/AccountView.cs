@@ -7,27 +7,28 @@ public class AccountView
 {
     private readonly BankingContext _db;
     private readonly Account _account;
-    private readonly bool _owner;
     private readonly AccountEnumerator _enumerator;
     private readonly string _header;
+    private readonly Logger _logger;
 
-    private AccountView(BankingContext db, Account account, bool owner)
+
+    private AccountView(BankingContext db, Account account, bool owner, Logger logger)
     {
         _db = db;
         _account = account;
-        _owner = owner;
-        _enumerator = new AccountEnumerator(db, account);
+        _enumerator = new AccountEnumerator(db, account, logger);
+        _logger = logger;
 
         _header = owner
             ? $"Home > Accounts > {account.AccountNumber}"
             : $"Home > Account management ({account.Owner.Username}) > Account {account.AccountNumber}";
     }
 
-    public static void Open(BankingContext db, Account account, bool owner)
+    public static void Open(BankingContext db, Account account, bool owner, Logger logger)
     {
         while (true)
         {
-            var r = InnerOpen(db, account.AccountId, owner);
+            var r = InnerOpen(db, account.AccountId, owner, logger);
             if (!r)
             {
                 return;
@@ -41,7 +42,7 @@ public class AccountView
         Console.WriteLine($"Balance: {_enumerator.GetBalance():C}\n");
     }
 
-    private static bool InnerOpen(BankingContext db, int accountId, bool owner)
+    private static bool InnerOpen(BankingContext db, int accountId, bool owner, Logger logger)
     {
         var account = db.Accounts.Find(accountId);
         if (account == null)
@@ -49,7 +50,7 @@ public class AccountView
             throw new ApplicationException("Account not found");
         }
 
-        var accountView = new AccountView(db, account, owner);
+        var accountView = new AccountView(db, account, owner, logger);
 
         Console.Clear();
 
@@ -205,6 +206,8 @@ public class AccountView
         };
         _db.Transactions.Add(transaction);
         _db.SaveChanges();
+        _logger.Log(
+            $"Transaction {transaction.TransactionId}: {_account.AccountNumber} -> {receiver.AccountNumber}: {parsedAmount:C}");
 
         Console.WriteLine($"\n{parsedAmount:C} sent to {receiver.AccountNumber}.");
     }

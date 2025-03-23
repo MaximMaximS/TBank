@@ -6,16 +6,18 @@ public class Main
 {
     private readonly User _user;
     private readonly BankingContext _db;
+    private readonly Logger _logger;
 
-    private Main(User user, BankingContext db)
+    private Main(User user, BankingContext db, Logger logger)
     {
         _user = user;
         _db = db;
+        _logger = logger;
     }
 
-    public static bool Open(User user, BankingContext db)
+    public static bool Open(User user, BankingContext db, Logger logger)
     {
-        var main = new Main(user, db);
+        var main = new Main(user, db, new Logger(db));
 
         while (true)
         {
@@ -45,7 +47,7 @@ public class Main
             switch (option.KeyChar)
             {
                 case '1':
-                    ManageAccounts.Open(db, user, true);
+                    ManageAccounts.Open(db, user, true, logger);
                     continue;
                 case '2':
                     if (main.ChangePassword())
@@ -76,7 +78,7 @@ public class Main
                         var userAccount = db.Users.FirstOrDefault(u => u.Username == openUser);
                         if (userAccount != null)
                         {
-                            ManageAccounts.Open(db, userAccount, false);
+                            ManageAccounts.Open(db, userAccount, false, logger);
                             continue;
                         }
                     }

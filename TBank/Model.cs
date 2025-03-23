@@ -16,6 +16,8 @@ public class BankingContext : DbContext
     public DbSet<LoanAccount> LoanAccounts { get; set; }
 
     public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<Option> Options { get; set; }
+    public DbSet<Log> Logs { get; set; }
 
     private string DbPath { get; }
 
@@ -37,6 +39,8 @@ public class BankingContext : DbContext
         User.OnModelCreating(modelBuilder);
         Account.OnModelCreating(modelBuilder);
         Transaction.OnModelCreating(modelBuilder);
+        Option.OnModelCreating(modelBuilder);
+        Log.OnModelCreating(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }

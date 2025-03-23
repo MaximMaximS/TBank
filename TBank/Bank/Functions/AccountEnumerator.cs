@@ -3,7 +3,7 @@ using TBank.Models.Accounts;
 
 namespace TBank.Bank.Functions;
 
-public class AccountEnumerator(BankingContext db, Account account)
+public class AccountEnumerator(BankingContext db, Account account, Logger logger)
 {
     private decimal InterestForMonth(int year, int month, decimal interestRate, int? gracePeriod)
     {
@@ -44,7 +44,10 @@ public class AccountEnumerator(BankingContext db, Account account)
 
     private void ApplyInterest()
     {
-        if (account is not LoanAccount or SavingsAccount) return;
+        if (account is not LoanAccount && account is not SavingsAccount)
+        {
+            return;
+        }
 
         var lastInterest = account is LoanAccount
             ? db.Transactions
@@ -89,6 +92,7 @@ public class AccountEnumerator(BankingContext db, Account account)
                     };
                     db.Transactions.Add(transaction);
                     db.SaveChanges();
+                    logger.Log($"Interest (Savings) {interest:C} - {account.AccountNumber}");
                     break;
                 }
                 case LoanAccount loanAccount:
@@ -107,6 +111,7 @@ public class AccountEnumerator(BankingContext db, Account account)
                     };
                     db.Transactions.Add(transaction);
                     db.SaveChanges();
+                    logger.Log($"Interest (Loan) {interest:C} - {account.AccountNumber}");
                     break;
                 }
             }

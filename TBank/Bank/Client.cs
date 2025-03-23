@@ -1,5 +1,6 @@
 ﻿using TBank.Bank.Functions;
 using TBank.Models;
+using TBank.Models.Accounts;
 
 namespace TBank.Bank;
 
@@ -7,11 +8,13 @@ public class Client
 {
     private readonly BankingContext _db;
     private User _user;
+    private Logger _logger;
 
-    private Client(BankingContext db, User user)
+    private Client(BankingContext db, User user, Logger logger)
     {
         _db = db;
         _user = user;
+        _logger = logger;
     }
 
     public void Update()
@@ -38,19 +41,23 @@ public class Client
 
             var user = db.Users.FirstOrDefault(u => u.Username == username);
 
+            var logger = new Logger(db);
+
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
                 Console.WriteLine("Login successful.");
-                return new Client(db, user);
+                logger.Log($"User {user.Username} logged in.");
+                return new Client(db, user, logger);
             }
 
             Console.Write("Login failed. Press any key to try again...");
+            logger.Log($"Login failed for user {username}.");
             Console.ReadKey(true);
         }
     }
 
     public bool ShowMenu()
     {
-        return Main.Open(_user, _db);
+        return Main.Open(_user, _db, _logger);
     }
 }

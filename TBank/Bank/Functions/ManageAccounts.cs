@@ -9,17 +9,20 @@ public class ManageAccounts
     private readonly BankingContext _db;
     private readonly User _user;
     private readonly bool _owner;
+    private readonly Logger _logger;
 
-    private ManageAccounts(BankingContext db, User user, bool owner)
+
+    private ManageAccounts(BankingContext db, User user, bool owner, Logger logger)
     {
         _db = db;
         _user = user;
         _owner = owner;
+        _logger = logger;
     }
 
-    public static void Open(BankingContext db, User user, bool owner)
+    public static void Open(BankingContext db, User user, bool owner, Logger logger)
     {
-        var manageAccounts = new ManageAccounts(db, user, owner);
+        var manageAccounts = new ManageAccounts(db, user, owner, logger);
 
         while (true)
         {
@@ -46,7 +49,7 @@ public class ManageAccounts
                         a.AccountNumber == accountNumber && a.Owner.UserId == manageAccounts._user.UserId);
                     if (account != null)
                     {
-                        AccountView.Open(db, account, true);
+                        AccountView.Open(db, account, true, logger);
                         continue;
                     }
                 }
@@ -81,7 +84,7 @@ public class ManageAccounts
                                 a.AccountNumber == accountNumber && a.Owner.UserId == manageAccounts._user.UserId);
                             if (account != null)
                             {
-                                AccountView.Open(db, account, true);
+                                AccountView.Open(db, account, true, logger);
                                 continue;
                             }
                         }
@@ -124,7 +127,7 @@ public class ManageAccounts
                 _ => "Unknown"
             };
 
-            var balance = new AccountEnumerator(_db, account).GetBalance();
+            var balance = new AccountEnumerator(_db, account, _logger).GetBalance();
 
             Console.WriteLine($"{account.AccountNumber}: {type} - {balance:C}");
         }

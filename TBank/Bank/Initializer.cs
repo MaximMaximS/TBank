@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TBank.Bank.Functions;
 using TBank.Models;
 using TBank.Models.Accounts;
 
@@ -32,6 +33,18 @@ public static class Initializer
         };
         db.Accounts.Add(account);
         db.SaveChanges();
+
+        var logToDb = Utils.ReadBool("Log to database");
+
+        var opt = new Option
+        {
+            Key = "LogToDb",
+            Value = logToDb ? "true" : "false",
+        };
+        db.Options.Add(opt);
+        db.SaveChanges();
+
+        // End of mandatory initialization
 
         var example = new User
         {
@@ -68,7 +81,7 @@ public static class Initializer
             Owner = example,
             InterestRate = 3.5m,
             Student = false,
-            Created = new DateTime(2021, 1, 1),
+            Created = new DateTime(2019, 1, 1),
         };
         db.SavingsAccounts.Add(exampleSavings);
         db.SaveChanges();
@@ -92,7 +105,7 @@ public static class Initializer
             Owner = example,
             InterestRate = 6m,
             InterestFreeDays = 30,
-            Created = new DateTime(2020, 1, 1),
+            Created = new DateTime(2019, 1, 1),
         };
 
         db.LoanAccounts.Add(exampleLoan);

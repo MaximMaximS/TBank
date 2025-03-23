@@ -53,6 +53,49 @@ namespace TBank.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("TBank.Models.Log", b =>
+                {
+                    b.Property<int>("LogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("LogId");
+
+                    b.ToTable("Logs");
+                });
+
+            modelBuilder.Entity("TBank.Models.Option", b =>
+                {
+                    b.Property<int>("OptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("OptionId");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("Options");
+                });
+
             modelBuilder.Entity("TBank.Models.Transaction", b =>
                 {
                     b.Property<int>("TransactionId")
