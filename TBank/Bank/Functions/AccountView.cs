@@ -5,8 +5,8 @@ namespace TBank.Bank.Functions;
 
 public class AccountView
 {
-    private readonly BankingContext _db;
     private readonly Account _account;
+    private readonly BankingContext _db;
     private readonly AccountEnumerator _enumerator;
     private readonly string _header;
     private readonly Logger _logger;
@@ -29,10 +29,7 @@ public class AccountView
         while (true)
         {
             var r = InnerOpen(db, account.AccountId, owner, logger);
-            if (!r)
-            {
-                return;
-            }
+            if (!r) return;
         }
     }
 
@@ -45,10 +42,7 @@ public class AccountView
     private static bool InnerOpen(BankingContext db, int accountId, bool owner, Logger logger)
     {
         var account = db.Accounts.Find(accountId);
-        if (account == null)
-        {
-            throw new ApplicationException("Account not found");
-        }
+        if (account == null) throw new ApplicationException("Account not found");
 
         var accountView = new AccountView(db, account, owner, logger);
 
@@ -61,10 +55,7 @@ public class AccountView
         Console.WriteLine("1. View transactions");
         Console.WriteLine("2. Send money");
 
-        if (account is SavingsAccount or LoanAccount)
-        {
-            Console.WriteLine("3. Interest preview");
-        }
+        if (account is SavingsAccount or LoanAccount) Console.WriteLine("3. Interest preview");
 
         Console.WriteLine("0. Back");
 
@@ -149,10 +140,7 @@ public class AccountView
 
         Console.Write("Enter account number: ");
         var accountNumber = Console.ReadLine();
-        if (accountNumber == null)
-        {
-            return;
-        }
+        if (accountNumber == null) return;
 
         var receiver = _db.Accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
         if (receiver == null)
@@ -202,7 +190,7 @@ public class AccountView
             SenderId = _account.AccountId,
             Receiver = receiver,
             ReceiverId = receiver.AccountId,
-            Note = "Money transfer",
+            Note = "Money transfer"
         };
         _db.Transactions.Add(transaction);
         _db.SaveChanges();

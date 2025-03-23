@@ -29,10 +29,7 @@ public class AccountEnumerator(BankingContext db, Account account, Logger logger
             return avg;
         }
 
-        if (avg >= 0)
-        {
-            return 0;
-        }
+        if (avg >= 0) return 0;
 
         avg = avg * interestRate / 100 / 12;
 
@@ -44,10 +41,7 @@ public class AccountEnumerator(BankingContext db, Account account, Logger logger
 
     private void ApplyInterest()
     {
-        if (account is not LoanAccount && account is not SavingsAccount)
-        {
-            return;
-        }
+        if (account is not LoanAccount && account is not SavingsAccount) return;
 
         var lastInterest = account is LoanAccount
             ? db.Transactions
@@ -63,10 +57,7 @@ public class AccountEnumerator(BankingContext db, Account account, Logger logger
         // interest is paid monthly at 1. st of the next month
         if (lastInterest != null && lastInterest.Created.Month == DateTime.Now.Month &&
             lastInterest.Created.Year == DateTime.Now.Year) return;
-        if (account.Created.Month == DateTime.Now.Month && account.Created.Year == DateTime.Now.Year)
-        {
-            return;
-        }
+        if (account.Created.Month == DateTime.Now.Month && account.Created.Year == DateTime.Now.Year) return;
 
         var startMonth = lastInterest == null ? account.Created.Month : lastInterest.Created.Month;
         var startYear = lastInterest == null ? account.Created.Year : lastInterest.Created.Year;
@@ -88,7 +79,7 @@ public class AccountEnumerator(BankingContext db, Account account, Logger logger
                         Sender = root,
                         SenderId = root.AccountId,
                         Note = "Interest",
-                        Created = new DateTime(startYear, startMonth, 1).AddMonths(1),
+                        Created = new DateTime(startYear, startMonth, 1).AddMonths(1)
                     };
                     db.Transactions.Add(transaction);
                     db.SaveChanges();
@@ -107,7 +98,7 @@ public class AccountEnumerator(BankingContext db, Account account, Logger logger
                         Receiver = root,
                         ReceiverId = root.AccountId,
                         Note = "Interest",
-                        Created = new DateTime(startYear, startMonth, 1).AddMonths(1),
+                        Created = new DateTime(startYear, startMonth, 1).AddMonths(1)
                     };
                     db.Transactions.Add(transaction);
                     db.SaveChanges();

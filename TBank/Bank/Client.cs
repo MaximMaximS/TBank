@@ -1,14 +1,13 @@
 ﻿using TBank.Bank.Functions;
 using TBank.Models;
-using TBank.Models.Accounts;
 
 namespace TBank.Bank;
 
 public class Client
 {
     private readonly BankingContext _db;
+    private readonly Logger _logger;
     private User _user;
-    private Logger _logger;
 
     private Client(BankingContext db, User user, Logger logger)
     {

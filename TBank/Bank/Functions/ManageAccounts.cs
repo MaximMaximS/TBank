@@ -7,9 +7,9 @@ namespace TBank.Bank.Functions;
 public class ManageAccounts
 {
     private readonly BankingContext _db;
-    private readonly User _user;
-    private readonly bool _owner;
     private readonly Logger _logger;
+    private readonly bool _owner;
+    private readonly User _user;
 
 
     private ManageAccounts(BankingContext db, User user, bool owner, Logger logger)
@@ -38,10 +38,7 @@ public class ManageAccounts
             {
                 Console.Write("Select an account to view or 0 to go back: ");
                 var accountNumber = Console.ReadLine();
-                if (accountNumber == "0")
-                {
-                    return;
-                }
+                if (accountNumber == "0") return;
 
                 if (accountNumber != null)
                 {
@@ -142,17 +139,11 @@ public class ManageAccounts
             // random num 10 digits long
             var num = new StringBuilder();
             var rand = new Random();
-            for (var i = 0; i < 10; i++)
-            {
-                num.Append(rand.Next(0, 10));
-            }
+            for (var i = 0; i < 10; i++) num.Append(rand.Next(0, 10));
 
             var s = num.ToString();
             var exists = _db.Accounts.Any(a => a.AccountNumber == s);
-            if (!exists)
-            {
-                return s;
-            }
+            if (!exists) return s;
         }
     }
 
@@ -172,7 +163,7 @@ public class ManageAccounts
                 var account = new BasicAccount
                 {
                     AccountNumber = GenerateAccountNumber(),
-                    Owner = _user,
+                    Owner = _user
                 };
                 _db.BasicAccounts.Add(account);
                 _db.SaveChanges();
@@ -190,7 +181,7 @@ public class ManageAccounts
                     AccountNumber = GenerateAccountNumber(),
                     Owner = _user,
                     InterestRate = interest,
-                    Student = student,
+                    Student = student
                 };
 
                 _db.SavingsAccounts.Add(account);
@@ -203,7 +194,7 @@ public class ManageAccounts
                 const decimal interest = 6m;
                 const int gracePeriod = 30;
 
-                var account = new LoanAccount()
+                var account = new LoanAccount
                 {
                     AccountNumber = GenerateAccountNumber(),
                     Owner = _user,

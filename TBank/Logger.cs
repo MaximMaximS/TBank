@@ -5,8 +5,8 @@ namespace TBank;
 public class Logger
 {
     private readonly BankingContext _db;
-    private readonly bool _logToDb;
     private readonly string _log;
+    private readonly bool _logToDb;
 
     public Logger(BankingContext db)
     {

@@ -4,9 +4,9 @@ namespace TBank.Bank.Functions;
 
 public class Main
 {
-    private readonly User _user;
     private readonly BankingContext _db;
     private readonly Logger _logger;
+    private readonly User _user;
 
     private Main(User user, BankingContext db, Logger logger)
     {
@@ -28,15 +28,9 @@ public class Main
             Console.WriteLine("1. View accounts");
             Console.WriteLine("2. Change password");
 
-            if (user.PermissionLevel >= 4)
-            {
-                Console.WriteLine("3. Account management");
-            }
+            if (user.PermissionLevel >= 4) Console.WriteLine("3. Account management");
 
-            if (user.PermissionLevel >= 8)
-            {
-                Console.WriteLine("4. User management");
-            }
+            if (user.PermissionLevel >= 8) Console.WriteLine("4. User management");
 
             Console.WriteLine("0. Logout");
 
@@ -50,17 +44,11 @@ public class Main
                     ManageAccounts.Open(db, user, true, logger);
                     continue;
                 case '2':
-                    if (main.ChangePassword())
-                    {
-                        logout = true;
-                    }
+                    if (main.ChangePassword()) logout = true;
 
                     break;
                 case '3':
-                    if (user.PermissionLevel < 4)
-                    {
-                        continue;
-                    }
+                    if (user.PermissionLevel < 4) continue;
 
                     Console.Clear();
                     Console.WriteLine("Home > Account management\n");
@@ -86,10 +74,7 @@ public class Main
                     Console.WriteLine("\nInvalid user.");
                     break;
                 case '4':
-                    if (user.PermissionLevel < 8)
-                    {
-                        continue;
-                    }
+                    if (user.PermissionLevel < 8) continue;
 
                     ManageUsers.Open(db);
                     continue;
@@ -103,10 +88,7 @@ public class Main
 
             Utils.Footer();
 
-            if (logout)
-            {
-                return true;
-            }
+            if (logout) return true;
         }
     }
 
@@ -136,10 +118,7 @@ public class Main
             if (newPassword == confirmNewPassword)
             {
                 var dbUser = _db.Users.Find(_user.UserId);
-                if (dbUser == null)
-                {
-                    throw new ApplicationException("User not found");
-                }
+                if (dbUser == null) throw new ApplicationException("User not found");
 
                 dbUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
                 _db.SaveChanges();

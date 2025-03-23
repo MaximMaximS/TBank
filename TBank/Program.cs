@@ -1,4 +1,6 @@
-﻿namespace TBank;
+﻿using TBank.Bank;
+
+namespace TBank;
 
 internal static class Program
 {
@@ -7,7 +9,7 @@ internal static class Program
         bool loop;
         do
         {
-            var client = Bank.Client.Login();
+            var client = Client.Login();
             loop = client.ShowMenu();
         } while (loop);
 

@@ -63,10 +63,7 @@ public class ManageUsers
 
         Console.WriteLine("Users:\n");
 
-        foreach (var user in users)
-        {
-            Console.WriteLine(user.Username);
-        }
+        foreach (var user in users) Console.WriteLine(user.Username);
     }
 
     private void CreateUser()
@@ -100,10 +97,7 @@ public class ManageUsers
         }
         else
         {
-            if (Utils.ReadBool("Is user banker"))
-            {
-                level = 4;
-            }
+            if (Utils.ReadBool("Is user banker")) level = 4;
         }
 
 

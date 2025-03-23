@@ -21,7 +21,7 @@ public static class Initializer
         {
             Username = "root",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("root"),
-            PermissionLevel = 9,
+            PermissionLevel = 9
         };
         db.Users.Add(root);
         db.SaveChanges();
@@ -29,7 +29,7 @@ public static class Initializer
         var account = new Account
         {
             AccountNumber = "0000000000",
-            Owner = root,
+            Owner = root
         };
         db.Accounts.Add(account);
         db.SaveChanges();
@@ -39,7 +39,7 @@ public static class Initializer
         var opt = new Option
         {
             Key = "LogToDb",
-            Value = logToDb ? "true" : "false",
+            Value = logToDb ? "true" : "false"
         };
         db.Options.Add(opt);
         db.SaveChanges();
@@ -50,7 +50,7 @@ public static class Initializer
         {
             Username = "example",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("example"),
-            PermissionLevel = 0,
+            PermissionLevel = 0
         };
         db.Users.Add(example);
         db.SaveChanges();
@@ -58,7 +58,7 @@ public static class Initializer
         var exampleAccount = new BasicAccount
         {
             AccountNumber = "0000000001",
-            Owner = example,
+            Owner = example
         };
         db.BasicAccounts.Add(exampleAccount);
         db.SaveChanges();
@@ -70,7 +70,7 @@ public static class Initializer
             SenderId = account.AccountId,
             Receiver = exampleAccount,
             ReceiverId = exampleAccount.AccountId,
-            Note = "Initial deposit",
+            Note = "Initial deposit"
         };
         db.Transactions.Add(sampleMoney);
         db.SaveChanges();
@@ -81,7 +81,7 @@ public static class Initializer
             Owner = example,
             InterestRate = 3.5m,
             Student = false,
-            Created = new DateTime(2019, 1, 1),
+            Created = new DateTime(2019, 1, 1)
         };
         db.SavingsAccounts.Add(exampleSavings);
         db.SaveChanges();
@@ -94,7 +94,7 @@ public static class Initializer
             Receiver = exampleSavings,
             ReceiverId = exampleSavings.AccountId,
             Note = "Initial deposit",
-            Created = new DateTime(2021, 1, 1),
+            Created = new DateTime(2021, 1, 1)
         };
         db.Transactions.Add(sampleSavings);
         db.SaveChanges();
@@ -105,7 +105,7 @@ public static class Initializer
             Owner = example,
             InterestRate = 6m,
             InterestFreeDays = 30,
-            Created = new DateTime(2019, 1, 1),
+            Created = new DateTime(2019, 1, 1)
         };
 
         db.LoanAccounts.Add(exampleLoan);
@@ -119,7 +119,7 @@ public static class Initializer
             Receiver = exampleSavings,
             ReceiverId = exampleSavings.AccountId,
             Note = "Initial loan",
-            Created = new DateTime(2020, 1, 1),
+            Created = new DateTime(2020, 1, 1)
         };
         db.Transactions.Add(sampleLoan);
         db.SaveChanges();
