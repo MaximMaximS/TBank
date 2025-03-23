@@ -120,6 +120,7 @@ public class ManageAccounts
             {
                 BasicAccount => "Basic",
                 SavingsAccount => "Savings",
+                LoanAccount => "Loan",
                 _ => "Unknown"
             };
 
@@ -157,7 +158,7 @@ public class ManageAccounts
         Console.Clear();
         Console.WriteLine($"Home > Account management ({_user.Username}) > Create account\n");
 
-        Console.Write("Account type (1. Basic, 2. Savings): ");
+        Console.Write("Account type (1. Basic, 2. Savings, 3. Loan): ");
         var type = Console.ReadKey(true);
         Console.WriteLine();
 
@@ -190,6 +191,24 @@ public class ManageAccounts
                 };
 
                 _db.SavingsAccounts.Add(account);
+                _db.SaveChanges();
+                Console.WriteLine($"Account created: {account.AccountNumber}");
+                break;
+            }
+            case '3':
+            {
+                const decimal interest = 6m;
+                const int gracePeriod = 30;
+
+                var account = new LoanAccount()
+                {
+                    AccountNumber = GenerateAccountNumber(),
+                    Owner = _user,
+                    InterestRate = interest,
+                    InterestFreeDays = gracePeriod
+                };
+
+                _db.LoanAccounts.Add(account);
                 _db.SaveChanges();
                 Console.WriteLine($"Account created: {account.AccountNumber}");
                 break;

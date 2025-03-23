@@ -13,6 +13,7 @@ public class BankingContext : DbContext
     public DbSet<Account> Accounts { get; set; }
     public DbSet<BasicAccount> BasicAccounts { get; set; }
     public DbSet<SavingsAccount> SavingsAccounts { get; set; }
+    public DbSet<LoanAccount> LoanAccounts { get; set; }
 
     public DbSet<Transaction> Transactions { get; set; }
 

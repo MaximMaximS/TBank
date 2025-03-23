@@ -5,7 +5,7 @@ namespace TBank.Bank.Functions;
 
 public class AccountEnumerator(BankingContext db, Account account)
 {
-    private decimal InterestForMonth(int year, int month, decimal interestRate)
+    private decimal InterestForMonth(int year, int month, decimal interestRate, int? gracePeriod)
     {
         var daysInMonth = DateTime.DaysInMonth(year, month);
 
@@ -14,26 +14,48 @@ public class AccountEnumerator(BankingContext db, Account account)
         for (var i = 1; i <= daysInMonth; i++)
         {
             var date = new DateTime(year, month, i);
-            avg += GetBalanceAt(date);
+            avg += gracePeriod != null ? GetBalanceAtLoan(date, gracePeriod.Value) : GetBalanceAt(date);
         }
 
         avg /= daysInMonth;
+
+        if (gracePeriod == null)
+        {
+            avg = avg * interestRate / 100 / 12;
+
+            // round to 2 decimal places
+            avg = Math.Floor(avg * 100) / 100;
+
+            return avg;
+        }
+
+        if (avg >= 0)
+        {
+            return 0;
+        }
 
         avg = avg * interestRate / 100 / 12;
 
         // round to 2 decimal places
         avg = Math.Floor(avg * 100) / 100;
 
-        return avg;
+        return -avg;
     }
 
     private void ApplyInterest()
     {
-        if (account is not SavingsAccount savingsAccount) return;
-        var lastInterest = db.Transactions
-            .Where(t => t.ReceiverId == account.AccountId && t.Note == "Interest")
-            .OrderByDescending(t => t.Created)
-            .FirstOrDefault();
+        if (account is not LoanAccount or SavingsAccount) return;
+
+        var lastInterest = account is LoanAccount
+            ? db.Transactions
+                .Where(t => t.SenderId == account.AccountId && t.Note == "Interest")
+                .OrderByDescending(t => t.Created)
+                .FirstOrDefault()
+            : db.Transactions
+                .Where(t => t.ReceiverId == account.AccountId && t.Note == "Interest")
+                .OrderByDescending(t => t.Created)
+                .FirstOrDefault();
+
 
         // interest is paid monthly at 1. st of the next month
         if (lastInterest != null && lastInterest.Created.Month == DateTime.Now.Month &&
@@ -50,19 +72,44 @@ public class AccountEnumerator(BankingContext db, Account account)
 
         while (startYear < DateTime.Now.Year || (startYear == DateTime.Now.Year && startMonth < DateTime.Now.Month))
         {
-            var interest = InterestForMonth(startYear, startMonth, savingsAccount.InterestRate);
-            var transaction = new Transaction
+            switch (account)
             {
-                Amount = interest,
-                Receiver = account,
-                ReceiverId = account.AccountId,
-                Sender = root,
-                SenderId = root.AccountId,
-                Note = "Interest",
-                Created = new DateTime(startYear, startMonth, 1).AddMonths(1),
-            };
-            db.Transactions.Add(transaction);
-            db.SaveChanges();
+                case SavingsAccount savingsAccount:
+                {
+                    var interest = InterestForMonth(startYear, startMonth, savingsAccount.InterestRate, null);
+                    var transaction = new Transaction
+                    {
+                        Amount = interest,
+                        Receiver = account,
+                        ReceiverId = account.AccountId,
+                        Sender = root,
+                        SenderId = root.AccountId,
+                        Note = "Interest",
+                        Created = new DateTime(startYear, startMonth, 1).AddMonths(1),
+                    };
+                    db.Transactions.Add(transaction);
+                    db.SaveChanges();
+                    break;
+                }
+                case LoanAccount loanAccount:
+                {
+                    var interest = InterestForMonth(startYear, startMonth, loanAccount.InterestRate,
+                        loanAccount.InterestFreeDays);
+                    var transaction = new Transaction
+                    {
+                        Amount = interest,
+                        Sender = account,
+                        SenderId = account.AccountId,
+                        Receiver = root,
+                        ReceiverId = root.AccountId,
+                        Note = "Interest",
+                        Created = new DateTime(startYear, startMonth, 1).AddMonths(1),
+                    };
+                    db.Transactions.Add(transaction);
+                    db.SaveChanges();
+                    break;
+                }
+            }
 
             startMonth++;
             if (startMonth <= 12) continue;
@@ -73,25 +120,53 @@ public class AccountEnumerator(BankingContext db, Account account)
 
     public decimal PreviewInterest(DateTime when)
     {
-        if (account is not SavingsAccount savingsAccount) return 0;
-        ApplyInterest();
-
-        var bal = GetBalance();
-
-        // how many times will interest be paid between now and when
-        var interestTimes = (when.Year - DateTime.Now.Year) * 12 + when.Month - DateTime.Now.Month;
-
-        var interest = bal;
-
-        for (var i = 0; i < interestTimes; i++)
+        switch (account)
         {
-            interest *= 1 + savingsAccount.InterestRate / 100 / 12;
-            interest = Math.Floor(interest * 100) / 100;
+            case SavingsAccount savingsAccount:
+            {
+                ApplyInterest();
+
+                var bal = GetBalance();
+
+                // how many times will interest be paid between now and when
+                var interestTimes = (when.Year - DateTime.Now.Year) * 12 + when.Month - DateTime.Now.Month;
+
+                var interest = bal;
+
+                for (var i = 0; i < interestTimes; i++)
+                {
+                    interest *= 1 + savingsAccount.InterestRate / 100 / 12;
+                    interest = Math.Floor(interest * 100) / 100;
+                }
+
+                interest -= bal;
+
+                return interest;
+            }
+            case LoanAccount loanAccount:
+            {
+                ApplyInterest();
+
+                var bal = GetBalance();
+
+                // how many times will interest be paid between now and when
+                var interestTimes = (when.Year - DateTime.Now.Year) * 12 + when.Month - DateTime.Now.Month;
+
+                var interest = bal;
+
+                for (var i = 0; i < interestTimes; i++)
+                {
+                    interest *= 1 + loanAccount.InterestRate / 100 / 12;
+                    interest = Math.Floor(interest * 100) / 100;
+                }
+
+                interest -= bal;
+
+                return interest;
+            }
+            default:
+                return 0;
         }
-
-        interest -= bal;
-
-        return interest;
     }
 
     private decimal GetBalanceAt(DateTime date)
@@ -104,6 +179,20 @@ public class AccountEnumerator(BankingContext db, Account account)
             .Sum(t => t.Amount);
 
         return incoming + outgoing;
+    }
+
+    private decimal GetBalanceAtLoan(DateTime date, int days)
+    {
+        var incoming = db.Transactions
+            .Where(t => t.ReceiverId == account.AccountId && t.Created <= date)
+            .Sum(t => t.Amount);
+
+        // all loan minus those within grace period
+        var outgoing = db.Transactions
+            .Where(t => t.SenderId == account.AccountId && (t.Created < date.AddDays(-days) || t.Note == "Interest"))
+            .Sum(t => t.Amount);
+
+        return incoming - outgoing;
     }
 
     public decimal GetBalance()

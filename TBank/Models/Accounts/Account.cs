@@ -4,20 +4,21 @@ namespace TBank.Models.Accounts;
 
 public class Account
 {
-    public int AccountId { get; set; }
-    public required string AccountNumber { get; set; }
-    public required User Owner { get; set; }
-    public DateTime Created { get; set; } = DateTime.Now;
+    public int AccountId { get; init; }
+    public required string AccountNumber { get; init; }
+    public required User Owner { get; init; }
+    public DateTime Created { get; init; } = DateTime.Now;
 
-    public List<Transaction> OutgoingTransactions { get; set; } = [];
-    public List<Transaction> IncomingTransactions { get; set; } = [];
+    public List<Transaction> OutgoingTransactions { get; init; } = [];
+    public List<Transaction> IncomingTransactions { get; init; } = [];
 
     public static void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Account>().ToTable("Accounts").HasDiscriminator<string>("AccountType")
             .HasValue<Account>("Base")
             .HasValue<BasicAccount>("Basic")
-            .HasValue<SavingsAccount>("Savings");
+            .HasValue<SavingsAccount>("Savings")
+            .HasValue<LoanAccount>("Loan");
 
         modelBuilder.Entity<Account>().HasIndex(a => a.AccountNumber).IsUnique();
 
@@ -26,5 +27,6 @@ public class Account
             .HasMaxLength(10);
 
         SavingsAccount.OnModelCreating(modelBuilder);
+        LoanAccount.OnModelCreating(modelBuilder);
     }
 }

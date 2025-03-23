@@ -5,12 +5,12 @@ namespace TBank.Models;
 
 public class User
 {
-    public int UserId { get; set; }
-    public required string Username { get; set; }
+    public int UserId { get; init; }
+    public required string Username { get; init; }
     public required string PasswordHash { get; set; }
-    public required int PermissionLevel { get; set; }
-    public List<Account> Accounts { get; set; } = [];
-    public DateTime Created { get; set; } = DateTime.Now;
+    public required int PermissionLevel { get; init; }
+    public List<Account> Accounts { get; init; } = [];
+    public DateTime Created { get; init; } = DateTime.Now;
 
 
     public static void OnModelCreating(ModelBuilder modelBuilder)

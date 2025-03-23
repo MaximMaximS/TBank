@@ -60,7 +60,7 @@ public class AccountView
         Console.WriteLine("1. View transactions");
         Console.WriteLine("2. Send money");
 
-        if (account is SavingsAccount)
+        if (account is SavingsAccount or LoanAccount)
         {
             Console.WriteLine("3. Interest preview");
         }
@@ -81,7 +81,7 @@ public class AccountView
                 accountView.SendMoney();
                 break;
             case '3':
-                if (account is not SavingsAccount) return true;
+                if (account is not SavingsAccount or LoanAccount) return true;
                 accountView.InterestPreview();
                 break;
             case '0':
@@ -111,6 +111,8 @@ public class AccountView
         var interest = _enumerator.PreviewInterest(parsedDate);
 
         Console.WriteLine($"\nInterest on {parsedDate:yyyy-MM-dd}: {interest:C}");
+        Console.WriteLine(
+            "Note: This is an estimate and doesn't guarantee the actual interest. For accurate interest calculation refer to the contract.");
     }
 
     private void ViewTransactions()
@@ -166,7 +168,7 @@ public class AccountView
             return;
         }
 
-        if (parsedAmount <= 0)
+        if (_account is not LoanAccount && parsedAmount <= 0)
         {
             Console.WriteLine("\nAmount must be greater than 0.");
             return;

@@ -5,15 +5,15 @@ namespace TBank.Models;
 
 public class Transaction
 {
-    public int TransactionId { get; set; }
-    public required Account Sender { get; set; }
-    public required int SenderId { get; set; }
-    public required Account Receiver { get; set; }
-    public required int ReceiverId { get; set; }
-    public required decimal Amount { get; set; }
-    public DateTime Created { get; set; } = DateTime.Now;
+    public int TransactionId { get; init; }
+    public required Account Sender { get; init; }
+    public required int SenderId { get; init; }
+    public required Account Receiver { get; init; }
+    public required int ReceiverId { get; init; }
+    public required decimal Amount { get; init; }
+    public DateTime Created { get; init; } = DateTime.Now;
 
-    public required string Note { get; set; }
+    public required string Note { get; init; }
 
     public static void OnModelCreating(ModelBuilder modelBuilder)
     {

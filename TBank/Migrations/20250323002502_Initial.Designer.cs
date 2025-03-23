@@ -11,7 +11,7 @@ using TBank;
 namespace TBank.Migrations
 {
     [DbContext(typeof(BankingContext))]
-    [Migration("20250322230731_Initial")]
+    [Migration("20250323002502_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -125,6 +125,20 @@ namespace TBank.Migrations
                     b.HasDiscriminator().HasValue("Basic");
                 });
 
+            modelBuilder.Entity("TBank.Models.Accounts.LoanAccount", b =>
+                {
+                    b.HasBaseType("TBank.Models.Accounts.Account");
+
+                    b.Property<int>("InterestFreeDays")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("InterestRate")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("TEXT");
+
+                    b.HasDiscriminator().HasValue("Loan");
+                });
+
             modelBuilder.Entity("TBank.Models.Accounts.SavingsAccount", b =>
                 {
                     b.HasBaseType("TBank.Models.Accounts.Account");
@@ -135,6 +149,12 @@ namespace TBank.Migrations
 
                     b.Property<bool>("Student")
                         .HasColumnType("INTEGER");
+
+                    b.ToTable("Accounts", t =>
+                        {
+                            t.Property("InterestRate")
+                                .HasColumnName("SavingsAccount_InterestRate");
+                        });
 
                     b.HasDiscriminator().HasValue("Savings");
                 });

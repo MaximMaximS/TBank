@@ -38,6 +38,8 @@ namespace TBank.Migrations
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     AccountType = table.Column<string>(type: "TEXT", maxLength: 8, nullable: false),
                     InterestRate = table.Column<decimal>(type: "TEXT", precision: 5, scale: 2, nullable: true),
+                    InterestFreeDays = table.Column<int>(type: "INTEGER", nullable: true),
+                    SavingsAccount_InterestRate = table.Column<decimal>(type: "TEXT", precision: 5, scale: 2, nullable: true),
                     Student = table.Column<bool>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
